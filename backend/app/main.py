@@ -1,16 +1,33 @@
 # backend/app/main.py
+from __future__ import annotations
+from dotenv import load_dotenv
+import os
 from fastapi import FastAPI, UploadFile, File
-from app.api import chat, onboarding, feedback, health
 from pydantic import BaseModel
-from chatbot import initialize_chatbot, handle_user_query
 
+# IMPORTANT:
+# - If you're running with: uvicorn app.main:app
+#   then "app" is a top-level package inside backend/
+#   so these imports should work.
+
+# If chatbot.py is at backend/chatbot.py, this import works when running from backend/
+from app.api.chatbot_agi import initialize_chatbot, handle_user_query
+
+#load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
+#load_dotenv()
 
 app = FastAPI(title="Onboarding AI")
 
-app.include_router(health.router)
-app.include_router(chat.router, prefix="/chat")
-app.include_router(onboarding.router, prefix="/onboarding")
-app.include_router(feedback.router, prefix="/feedback")
+# -----------------------
+# Routers
+# -----------------------
+# Health usually should not have a prefix
+#app.include_router(health.router)
+
+# Add prefixes for grouped APIs
+#app.include_router(onboarding.router, prefix="/onboarding", tags=["onboarding"])
+#app.include_router(feedback.router, prefix="/feedback", tags=["feedback"])
+
 
 app = FastAPI()
 SESSIONS = {}
