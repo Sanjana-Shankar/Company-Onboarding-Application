@@ -40,7 +40,7 @@ class Question(BaseModel):
     user_id: str
     question: str
 
-
+'''
 @app.post("/chatbot/upload")
 async def upload(file: UploadFile = File(...)):
     file_bytes = await file.read()
@@ -49,6 +49,20 @@ async def upload(file: UploadFile = File(...)):
     session_id = agent.agent_id
     SESSIONS[session_id] = agent
 
+    return {"session_id": session_id}
+'''
+
+@app.post("/chatbot/upload")
+async def upload(file: UploadFile = File(...)):
+    file_bytes = await file.read()
+    agent = initialize_chatbot(file_bytes)
+
+    # Support both attribute names (agent_id vs session_id)
+    session_id = getattr(agent, "agent_id", None) or getattr(agent, "session_id", None)
+    if not session_id:
+        return {"error": "Agent session is missing an id (expected agent_id or session_id)"}
+
+    SESSIONS[session_id] = agent
     return {"session_id": session_id}
 
 
