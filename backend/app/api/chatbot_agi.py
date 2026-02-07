@@ -1,6 +1,8 @@
 # chatbot.py
 from __future__ import annotations
-from backend.app.api.intercom import IntercomClient
+from dotenv import load_dotenv
+load_dotenv()
+from app.api.intercom import IntercomClient
 
 import time
 import re
@@ -9,8 +11,9 @@ from collections import defaultdict, deque
 from difflib import SequenceMatcher
 from typing import Deque, Dict, List, Tuple
 
-from agi_runtime import create_document_agent, extract_document, run_agent
-from backend.app.api.intercom import create_doc_gap, escalate_doc_gap_to_intercom
+from app.api.agi_runtime import create_document_agent, extract_document, run_agent
+#from app.api.intercom import create_doc_gap, escalate_doc_gap_to_intercom
+from app.api.intercom import IntercomClient
 
 # --- Tunables ---
 SIMILARITY_THRESHOLD = 0.72       # how similar two queries must be to count as "same issue"
@@ -135,7 +138,7 @@ def escalate_doc_gap_to_intercom(
         sources=sources,
         confidence=confidence,
         decision_reason=decision_reason,
-    )
+    )  
     return res["conversation_id"]
 
 def handle_user_query(agent, user_id: str, question: str):

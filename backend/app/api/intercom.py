@@ -1,7 +1,10 @@
-intercom.py
+#intercom.py
 import os
 import requests
 from typing import List, Dict, Any, Optional
+from dotenv import load_dotenv
+load_dotenv()
+
 
 class IntercomClient:
     def __init__(self):
