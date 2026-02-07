@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import os
 from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
+from app.api import onboarding, feedback, health, composio
+from app.core.config import settings
 
 # IMPORTANT:
 # - If you're running with: uvicorn app.main:app
@@ -27,7 +29,8 @@ app = FastAPI(title="Onboarding AI")
 # Add prefixes for grouped APIs
 #app.include_router(onboarding.router, prefix="/onboarding", tags=["onboarding"])
 #app.include_router(feedback.router, prefix="/feedback", tags=["feedback"])
-
+app.include_router(health.router)
+app.include_router(composio.router)
 
 app = FastAPI()
 SESSIONS = {}
@@ -61,3 +64,9 @@ async def ask(payload: Question):
         payload.question
     )
     return {"answer": response}
+
+@app.get("/health/config")
+def config_health():
+    return {"gmail_auth_config_id_set": bool(settings.COMPOSIO_GMAIL_AUTH_CONFIG_ID)}
+
+
